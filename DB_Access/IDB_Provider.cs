@@ -1,4 +1,4 @@
-﻿using OrdersManager.Models;
+﻿using OrdersManager.DBcontext;
 
 namespace OrdersManager.DB_Access
 {
@@ -8,8 +8,8 @@ namespace OrdersManager.DB_Access
         public void UpdateOrder();
         public void DeleteOrder();
         public void DeleteOrderItem();
-        public OrderModel GetOrderById(int id);
-        public List<OrderModel> GetOrdersByProvider(int providerId);
-        public List<OrderModel> GetAllOrders();
+        public Order GetOrderById(int id);
+        public List<Order> GetOrdersByProvider(int providerId);
+        public List<Order> GetAllOrders();
     }
 }

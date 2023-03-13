@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrdersManager.DB_Access;
-using OrdersManager.Models;
+using OrdersManager.DBcontext;
 
 namespace DbAccessAPI.Controllers
 {
@@ -17,19 +17,28 @@ namespace DbAccessAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<OrderModel> GetOrder(int id)
+        public ActionResult<Order> GetOrder(int id)
         {
             return BadRequest();
         }
 
         [HttpGet("")]
-        public ActionResult<List<OrderModel>> GetAllOrders()
+        public List<Order> GetAllOrders()
         {
-            return BadRequest();
+            try
+            {
+                return _dbProvider.GetAllOrders();
+            }
+            catch(Exception e)
+            {
+
+            }
+            return new List<Order>();
+            
         }
         [HttpGet("provider/{id}")]
 
-        public ActionResult<List<OrderModel>> GetOrdersByProvider()
+        public ActionResult<List<Order>> GetOrdersByProvider()
         {
             return BadRequest();
         }

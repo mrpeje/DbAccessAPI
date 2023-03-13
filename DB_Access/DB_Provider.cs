@@ -1,5 +1,5 @@
 ﻿using OrdersManager.DBcontext;
-using OrdersManager.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace OrdersManager.DB_Access
 {
@@ -27,17 +27,19 @@ namespace OrdersManager.DB_Access
 
         }
 
-        public OrderModel GetOrderById(int id)
+        public Order GetOrderById(int id)
         {
             return null;
         }
-        public List<OrderModel> GetOrdersByProvider(int providerId)
+        public List<Order> GetOrdersByProvider(int providerId)
         {
-            return new List<OrderModel>();
+            return new List<Order>();
         }
-        public List<OrderModel> GetAllOrders()
+        public List<Order> GetAllOrders()
         {
-            return new List<OrderModel>();
+            var orders = _context.Order.Include(e=>e.Provider).ToList();
+
+            return orders;
         }
     }
 
