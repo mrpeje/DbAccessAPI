@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrdersManager.DB_Access;
 using OrdersManager.DBcontext;
+using OrdersManager.Models;
 
 namespace DbAccessAPI.Controllers
 {
@@ -43,16 +44,31 @@ namespace DbAccessAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPost("EditOrder")]
-        public IActionResult PostEditOrder()
+        private IActionResult EditOrder(EditCreateModel dataModel)
+        {
+            return BadRequest();
+        }
+        private IActionResult CreateOrder(EditCreateModel dataModel)
         {
             return BadRequest();
         }
 
-        [HttpPost("CreateOrder")]
-        public IActionResult PostCreateOrder()
+        [HttpPost("CreateEditOrder")]
+        public IActionResult PostProcessOrder(EditCreateModel dataModel)
         {
-            return BadRequest();
+            var result = OperationStatus.Error;
+            if (dataModel.Order.Id == 0)
+            {
+                result = _dbProvider.CreateOrder(dataModel);
+            }
+            else
+            {
+                result = _dbProvider.UpdateOrder(dataModel);
+            }
+            if (result == OperationStatus.Success)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         [HttpPost("DeleteOrder/{id}")]

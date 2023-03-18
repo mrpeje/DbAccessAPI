@@ -1,5 +1,6 @@
 ﻿using OrdersManager.DBcontext;
 using Microsoft.EntityFrameworkCore;
+using OrdersManager.Models;
 
 namespace OrdersManager.DB_Access
 {
@@ -10,22 +11,46 @@ namespace OrdersManager.DB_Access
         {
             _context = context;
         }
-        public void CreateOrder() 
-        { 
-
-        }
-        public void UpdateOrder()
+        public OperationStatus CreateOrder(EditCreateModel dataModel) 
         {
+            var newOrder = new Order
+            {
+                Number = dataModel.Order.Number,
+                Date = dataModel.Order.Date,
+                ProviderId = dataModel.Order.ProviderId
+            };
+            dataModel.Order.Provider = _context.Provider.FirstOrDefault(e=>e.Id == dataModel.Order.ProviderId);
+            _context.Order.Add(dataModel.Order);
+            
 
+            if (dataModel.OrderItems != null)
+            {
+                foreach (var item in dataModel.OrderItems)
+                {
+                    item.Order = dataModel.Order;
+                    item.Id = dataModel.Order.Id;
+                    _context.OrderItem.Add(item);
+                }
+            }
+            try
+            {
+               _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return OperationStatus.Error;
+            }
+            return OperationStatus.Success;
         }
-        public void DeleteOrder()
+        public OperationStatus UpdateOrder(EditCreateModel dataModel)
         {
-
+            return OperationStatus.Error;
         }
-        public void DeleteOrderItem()
+        public OperationStatus DeleteOrder(int id)
         {
-
+            return OperationStatus.Error;
         }
+
 
         public Order GetOrderById(int id)
         {
@@ -41,6 +66,11 @@ namespace OrdersManager.DB_Access
 
             return orders;
         }
+    }
+    public enum OperationStatus
+    {
+        Success = 0,
+        Error = 1
     }
 
 }

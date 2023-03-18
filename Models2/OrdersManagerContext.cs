@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.SqlServer;
 
-namespace OrdersManager.DBcontext
+namespace DbAccessAPI.Models2
 {
     public partial class OrdersManagerContext : DbContext
     {
@@ -23,19 +22,10 @@ namespace OrdersManager.DBcontext
         public virtual DbSet<OrderItem> OrderItem { get; set; }
         public virtual DbSet<Provider> Provider { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-SKDKQ0E; Database=OrdersManager; Trusted_Connection=True; MultipleActiveResultSets=true;TrustServerCertificate=True"/*"Data Source=DESKTOP-SKDKQ0E;Initial Catalog=OrdersManager;Integrated Security=True"*/);
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Order>(entity =>
             {
-
                 entity.Property(e => e.Number).IsRequired();
 
                 entity.HasOne(d => d.Provider)
@@ -47,7 +37,6 @@ namespace OrdersManager.DBcontext
 
             modelBuilder.Entity<OrderItem>(entity =>
             {
-
                 entity.Property(e => e.Name).IsRequired();
 
                 entity.Property(e => e.Quantity).HasColumnType("decimal(18, 3)");
@@ -55,7 +44,7 @@ namespace OrdersManager.DBcontext
                 entity.Property(e => e.Unit).IsRequired();
 
                 entity.HasOne(d => d.Order)
-                    .WithMany()
+                    .WithMany(p => p.OrderItem)
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OrderItem_Order");

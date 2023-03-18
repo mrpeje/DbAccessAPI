@@ -2,19 +2,22 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OrdersManager.DBcontext
+namespace DbAccessAPI.Models2
 {
     public partial class Order
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Order()
+        {
+            OrderItem = new HashSet<OrderItem>();
+        }
+
         public int Id { get; set; }
         public string Number { get; set; }
         public DateTime Date { get; set; }
         public int ProviderId { get; set; }
 
-        public Provider Provider { get; set; }
+        public virtual Provider Provider { get; set; }
+        public virtual ICollection<OrderItem> OrderItem { get; set; }
     }
 }
