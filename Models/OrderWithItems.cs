@@ -4,9 +4,9 @@ using OrdersManager.DBcontext;
 
 namespace OrdersManager.Models
 {
-    public class EditCreateModel
+    public class OrderWithItems
     {   
-        public EditCreateModel(Order order, List<OrderItem> items)
+        public OrderWithItems(Order order, List<OrderItem> items)
         {
             Order = order;
             OrderItems = items;

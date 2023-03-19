@@ -5,11 +5,11 @@ namespace OrdersManager.DB_Access
 {
     public interface IDB_Provider
     {
-        public OperationStatus CreateOrder(EditCreateModel dataModel);
-        public OperationStatus UpdateOrder(EditCreateModel dataModel);
+        public OperationStatus CreateOrder(OrderWithItems dataModel);
+        public OperationStatus UpdateOrder(OrderWithItems dataModel);
         public OperationStatus DeleteOrder(int id);
 
-        public Order GetOrderById(int id);
+        public OrderWithItems GetOrderById(int id);
         public List<Order> GetOrdersByProvider(int providerId);
         public List<Order> GetAllOrders();
     }

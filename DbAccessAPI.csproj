@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Models\EditCreateModel.cs" />
+    <Compile Include="Models\OrderWithItems.cs" />
   </ItemGroup>
 
   <ItemGroup>

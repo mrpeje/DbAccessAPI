@@ -11,7 +11,7 @@ namespace OrdersManager.DB_Access
         {
             _context = context;
         }
-        public OperationStatus CreateOrder(EditCreateModel dataModel) 
+        public OperationStatus CreateOrder(OrderWithItems dataModel) 
         {
             var newOrder = new Order
             {
@@ -42,7 +42,7 @@ namespace OrdersManager.DB_Access
             }
             return OperationStatus.Success;
         }
-        public OperationStatus UpdateOrder(EditCreateModel dataModel)
+        public OperationStatus UpdateOrder(OrderWithItems dataModel)
         {
             return OperationStatus.Error;
         }
@@ -52,9 +52,16 @@ namespace OrdersManager.DB_Access
         }
 
 
-        public Order GetOrderById(int id)
+        public OrderWithItems GetOrderById(int id)
         {
-            return null;
+            if (id == 0)
+                return null;
+            
+            var order = _context.Order.FirstOrDefault(e => e.Id == id);
+            var orderItems = _context.OrderItem.Where(e=>e.OrderId == id).ToList();
+            var returnResult = new OrderWithItems(order, orderItems);
+
+            return returnResult;
         }
         public List<Order> GetOrdersByProvider(int providerId)
         {

@@ -20,7 +20,10 @@ namespace DbAccessAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<Order> GetOrder(int id)
         {
-            return BadRequest();
+            var order = _dbProvider.GetOrderById(id);
+            if(order == null)
+                return BadRequest();
+            return Ok(order);
         }
 
         [HttpGet("")]
@@ -44,17 +47,17 @@ namespace DbAccessAPI.Controllers
             return BadRequest();
         }
 
-        private IActionResult EditOrder(EditCreateModel dataModel)
+        private IActionResult EditOrder(OrderWithItems dataModel)
         {
             return BadRequest();
         }
-        private IActionResult CreateOrder(EditCreateModel dataModel)
+        private IActionResult CreateOrder(OrderWithItems dataModel)
         {
             return BadRequest();
         }
 
         [HttpPost("CreateEditOrder")]
-        public IActionResult PostProcessOrder(EditCreateModel dataModel)
+        public IActionResult PostProcessOrder(OrderWithItems dataModel)
         {
             var result = OperationStatus.Error;
             if (dataModel.Order.Id == 0)
