@@ -46,8 +46,26 @@ namespace OrdersManager.DB_Access
         {
             return OperationStatus.Error;
         }
+        
         public OperationStatus DeleteOrder(int id)
         {
+            try
+            {
+                var orderItems = _context.OrderItem.Where(e => e.OrderId == id).ToList();
+                foreach (var item in orderItems)
+                {
+                    _context.OrderItem.Remove(item);
+                }
+                var order = _context.Order.FirstOrDefault(e => e.Id == id);
+                _context.Order.Remove(order);
+                _context.SaveChanges();
+
+                return OperationStatus.Success;
+            }
+            catch(Exception ex)
+            {
+
+            }
             return OperationStatus.Error;
         }
 

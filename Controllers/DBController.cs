@@ -74,10 +74,15 @@ namespace DbAccessAPI.Controllers
                 return BadRequest();
         }
 
-        [HttpPost("DeleteOrder/{id}")]
+        [HttpDelete ("Order/{id}")]
         public IActionResult DeleteOrder(int id)
         {
-            return BadRequest();
+            var result = _dbProvider.DeleteOrder(id);
+
+            if (result == OperationStatus.Success)
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }
