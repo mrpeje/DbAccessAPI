@@ -28,7 +28,6 @@ namespace OrdersManager.DB_Access
                 foreach (var item in dataModel.OrderItems)
                 {
                     item.Order = dataModel.Order;
-                    item.Id = dataModel.Order.Id;
                     _context.OrderItem.Add(item);
                 }
             }
@@ -44,7 +43,40 @@ namespace OrdersManager.DB_Access
         }
         public OperationStatus UpdateOrder(OrderWithItems dataModel)
         {
-            return OperationStatus.Error;
+            try
+            {
+                // Update order
+                var order = _context.Entry(dataModel.Order);
+                order.Entity.Provider = _context.Provider.FirstOrDefault(e => e.Id == dataModel.Order.ProviderId);
+                order.State = EntityState.Modified;
+
+                if (dataModel.OrderItems != null)
+                {
+                    // Update or Add OrderItems
+                    foreach (var item in dataModel.OrderItems)
+                    {
+                        item.Order = dataModel.Order;
+                        _context.Entry(item).State = item.Id == 0 ?
+                                  EntityState.Added :
+                                  EntityState.Modified;
+                        
+                    }
+                    // Delete OrderItems
+                    var orderItems = _context.OrderItem.Where(e => e.OrderId == dataModel.Order.Id).ToList();
+                    var deletedItems = orderItems.Where(userItem => dataModel.OrderItems.All(dbItem => userItem.Id != dbItem.Id)).ToList();
+                    foreach (var item in deletedItems)
+                    {
+                        _context.OrderItem.Remove(item);
+                    }
+
+                }
+                _context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                return OperationStatus.Error;
+            }
+            return OperationStatus.Success;
         }
         
         public OperationStatus DeleteOrder(int id)
