@@ -115,7 +115,8 @@ namespace OrdersManager.DB_Access
         }
         public List<Order> GetOrdersByProvider(int providerId)
         {
-            return new List<Order>();
+            var orders = _context.Order.Where(e=>e.ProviderId == providerId).ToList();
+            return orders;
         }
         public List<Order> GetAllOrders()
         {

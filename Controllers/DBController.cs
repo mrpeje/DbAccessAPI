@@ -42,9 +42,10 @@ namespace DbAccessAPI.Controllers
         }
         [HttpGet("provider/{id}")]
 
-        public ActionResult<List<Order>> GetOrdersByProvider()
+        public ActionResult<List<Order>> GetOrdersByProvider(int id)
         {
-            return BadRequest();
+            var orders = _dbProvider.GetOrdersByProvider(id);
+            return Ok(orders);
         }
 
         private IActionResult EditOrder(OrderWithItems dataModel)
