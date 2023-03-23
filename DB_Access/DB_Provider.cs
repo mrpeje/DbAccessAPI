@@ -118,6 +118,11 @@ namespace OrdersManager.DB_Access
             var orders = _context.Order.Where(e=>e.ProviderId == providerId).ToList();
             return orders;
         }
+        public List<Provider> GetAllProviders()
+        {
+            var providers = _context.Provider.ToList();
+            return providers;
+        }    
         public List<Order> GetAllOrders()
         {
             var orders = _context.Order.Include(e=>e.Provider).ToList();

@@ -20,10 +20,18 @@ namespace DbAccessAPI.Controllers
         [HttpGet("{id}")]
         public ActionResult<Order> GetOrder(int id)
         {
-            var order = _dbProvider.GetOrderById(id);
-            if(order == null)
+            try
+            {
+                var order = _dbProvider.GetOrderById(id);
+                if (order == null)
+                    return BadRequest();
+                return Ok(order);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "method GetOrder by " + id);
                 return BadRequest();
-            return Ok(order);
+            }            
         }
 
         [HttpGet("")]
@@ -35,55 +43,83 @@ namespace DbAccessAPI.Controllers
             }
             catch(Exception e)
             {
-
-            }
-            return new List<Order>();
-            
+                Logger.Error(e.Message + "method GetAllOrders");
+                return new List<Order>();
+            }                      
         }
-        [HttpGet("provider/{id}")]
+        [HttpGet("Providers")]
+        public List<Provider> GetAllProviders()
+        {
+            try
+            {
+                return _dbProvider.GetAllProviders();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "method GetAllProviders");
+                return new List<Provider>();
+            }
+        }
 
+        [HttpGet("provider/{id}")]
         public ActionResult<List<Order>> GetOrdersByProvider(int id)
         {
-            var orders = _dbProvider.GetOrdersByProvider(id);
-            return Ok(orders);
-        }
-
-        private IActionResult EditOrder(OrderWithItems dataModel)
-        {
-            return BadRequest();
-        }
-        private IActionResult CreateOrder(OrderWithItems dataModel)
-        {
-            return BadRequest();
+            try
+            {
+                var orders = _dbProvider.GetOrdersByProvider(id);
+                return Ok(orders);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+                Logger.Error(e.Message + " method GetOrdersByProvider id:" + id);
+            }
         }
 
         [HttpPost("CreateEditOrder")]
         public IActionResult PostProcessOrder(OrderWithItems dataModel)
         {
-            var result = OperationStatus.Error;
-            if (dataModel.Order.Id == 0)
-            {
-                result = _dbProvider.CreateOrder(dataModel);
+            try
+            {           
+                var result = OperationStatus.Error;
+                if (dataModel.Order.Id == 0)
+                {
+                    result = _dbProvider.CreateOrder(dataModel);
+                }
+                else
+                {
+                    result = _dbProvider.UpdateOrder(dataModel);
+                }
+                if (result == OperationStatus.Success)
+                    return Ok();
+                else
+                    return BadRequest();
             }
-            else
+            catch (Exception e)
             {
-                result = _dbProvider.UpdateOrder(dataModel);
-            }
-            if (result == OperationStatus.Success)
-                return Ok();
-            else
+                Logger.Error(e.Message + " method PostProcessOrder");
                 return BadRequest();
+            }
         }
 
         [HttpDelete ("Order/{id}")]
         public IActionResult DeleteOrder(int id)
         {
-            var result = _dbProvider.DeleteOrder(id);
+            try
+            {
+                var result = _dbProvider.DeleteOrder(id);
 
-            if (result == OperationStatus.Success)
-                return Ok();
-            else
+                if (result == OperationStatus.Success)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e.Message + " method DeleteOrder id:"+id);
                 return BadRequest();
+            }
+
         }
     }
 }

@@ -12,5 +12,6 @@ namespace OrdersManager.DB_Access
         public OrderWithItems GetOrderById(int id);
         public List<Order> GetOrdersByProvider(int providerId);
         public List<Order> GetAllOrders();
+        public List<Provider> GetAllProviders();
     }
 }
