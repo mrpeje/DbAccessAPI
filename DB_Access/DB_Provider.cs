@@ -70,6 +70,14 @@ namespace OrdersManager.DB_Access
                     }
 
                 }
+                else
+                {
+                    var orderItems = _context.OrderItem.Where(e => e.OrderId == dataModel.Order.Id).ToList();
+                    foreach (var item in orderItems)
+                    {
+                        _context.OrderItem.Remove(item);
+                    }
+                }
                 _context.SaveChanges();
             }
             catch(Exception ex)

@@ -17,7 +17,7 @@ namespace DbAccessAPI.Controllers
             _dbProvider = dbProvider;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("Order/{id}")]
         public ActionResult<Order> GetOrder(int id)
         {
             try
@@ -61,7 +61,7 @@ namespace DbAccessAPI.Controllers
             }
         }
 
-        [HttpGet("provider/{id}")]
+        [HttpGet("Providers/provider/{id}")]
         public ActionResult<List<Order>> GetOrdersByProvider(int id)
         {
             try
