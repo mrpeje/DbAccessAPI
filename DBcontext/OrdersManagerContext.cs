@@ -27,7 +27,7 @@ namespace OrdersManager.DBcontext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-SKDKQ0E; Database=OrdersManager; Trusted_Connection=True; MultipleActiveResultSets=true;TrustServerCertificate=True"/*"Data Source=DESKTOP-SKDKQ0E;Initial Catalog=OrdersManager;Integrated Security=True"*/);
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-SKDKQ0E;Initial Catalog=OrdersManager;Integrated Security=True;TrustServerCertificate=True");
             }
         }
 
