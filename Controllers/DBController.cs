@@ -7,12 +7,12 @@ namespace DbAccessAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrdersController : ControllerBase
+    public class OrderManager : ControllerBase
     {
         private readonly IDB_Provider _dbProvider;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public OrdersController(IDB_Provider dbProvider)
+        public OrderManager(IDB_Provider dbProvider)
         {
             _dbProvider = dbProvider;
         }
@@ -76,20 +76,13 @@ namespace DbAccessAPI.Controllers
             }
         }
 
-        [HttpPost("CreateEditOrder")]
-        public IActionResult PostProcessOrder(OrderWithItems dataModel)
+        [HttpDelete("Order/Item/{id}")]
+        public IActionResult DeleteOrderItem(int id)
         {
             try
-            {           
-                var result = OperationStatus.Error;
-                if (dataModel.Order.Id == 0)
-                {
-                    result = _dbProvider.CreateOrder(dataModel);
-                }
-                else
-                {
-                    result = _dbProvider.UpdateOrder(dataModel);
-                }
+            {
+                var result = _dbProvider.DeleteOrderItem(id);
+
                 if (result == OperationStatus.Success)
                     return Ok();
                 else
@@ -97,11 +90,10 @@ namespace DbAccessAPI.Controllers
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message + " method PostProcessOrder");
+                Logger.Error(e.Message + " method DeleteOrderItem id:" + id);
                 return BadRequest();
             }
         }
-
         [HttpDelete ("Order/{id}")]
         public IActionResult DeleteOrder(int id)
         {
@@ -120,6 +112,55 @@ namespace DbAccessAPI.Controllers
                 return BadRequest();
             }
 
+        }
+        [HttpGet("Order/Items/{id}")]
+        public List<OrderItem> GetItemsByOrderId(int id)
+        {
+            try
+            {                
+                return _dbProvider.GetItemsByOrderId(id);
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e.Message + "method GetAllOrders");
+                return new List<OrderItem>();
+            }
+        }
+        [HttpPut("Order/Item")]
+        public IActionResult UpdateOrderItem(OrderItem item)
+        {
+            try
+            {
+                var result = _dbProvider.UpdateOrderItem(item);
+
+                if (result == OperationStatus.Success)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + " method UpdateOrderItem id:" + item.Id);
+                return BadRequest();
+            }
+        }
+        [HttpPost("Order/Item/{orderId}")]
+        public IActionResult CreateOrderItem(OrderItem item, int orderId)
+        {
+            try
+            {
+                var result = _dbProvider.CreateOrderItem(item, orderId);
+
+                if (result == OperationStatus.Success)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + " method UpdateOrderItem id:" + item.Id);
+                return BadRequest();
+            }
         }
     }
 }

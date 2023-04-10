@@ -41,51 +41,6 @@ namespace OrdersManager.DB_Access
             }
             return OperationStatus.Success;
         }
-        public OperationStatus UpdateOrder(OrderWithItems dataModel)
-        {
-            try
-            {
-                // Update order
-                var order = _context.Entry(dataModel.Order);
-                order.Entity.Provider = _context.Provider.FirstOrDefault(e => e.Id == dataModel.Order.ProviderId);
-                order.State = EntityState.Modified;
-
-                if (dataModel.OrderItems != null)
-                {
-                    // Update or Add OrderItems
-                    foreach (var item in dataModel.OrderItems)
-                    {
-                        item.Order = dataModel.Order;
-                        _context.Entry(item).State = item.Id == 0 ?
-                                  EntityState.Added :
-                                  EntityState.Modified;
-                        
-                    }
-                    // Delete OrderItems
-                    var orderItems = _context.OrderItem.Where(e => e.OrderId == dataModel.Order.Id).ToList();
-                    var deletedItems = orderItems.Where(userItem => dataModel.OrderItems.All(dbItem => userItem.Id != dbItem.Id)).ToList();
-                    foreach (var item in deletedItems)
-                    {
-                        _context.OrderItem.Remove(item);
-                    }
-
-                }
-                else
-                {
-                    var orderItems = _context.OrderItem.Where(e => e.OrderId == dataModel.Order.Id).ToList();
-                    foreach (var item in orderItems)
-                    {
-                        _context.OrderItem.Remove(item);
-                    }
-                }
-                _context.SaveChanges();
-            }
-            catch(Exception ex)
-            {
-                return OperationStatus.Error;
-            }
-            return OperationStatus.Success;
-        }
         
         public OperationStatus DeleteOrder(int id)
         {
@@ -126,22 +81,97 @@ namespace OrdersManager.DB_Access
             var orders = _context.Order.Where(e=>e.ProviderId == providerId).ToList();
             return orders;
         }
-        public List<Provider> GetAllProviders()
+        public List<OrderItem> GetItemsByOrderId(int orderId)
         {
-            var providers = _context.Provider.ToList();
-            return providers;
-        }    
+            var orders = _context.OrderItem.Where(e => e.OrderId == orderId).ToList();
+            return orders;
+        }
         public List<Order> GetAllOrders()
         {
             var orders = _context.Order.Include(e=>e.Provider).ToList();
 
             return orders;
         }
+        public List<Provider> GetAllProviders()
+        {
+            var providers = _context.Provider.ToList();
+            return providers;
+        }
+
+        
+
+        public OperationStatus UpdateOrder(Order order)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationStatus CreateOrderItem(OrderItem item, int orderId)
+        {
+            try
+            {
+                var order = _context.Order.FirstOrDefault(e => e.Id == orderId);
+                if (order != null)
+                {
+                    item.Order = order;
+                    item.OrderId = order.Id;
+                    _context.OrderItem.Add(item);
+                    _context.SaveChanges();
+                    return OperationStatus.Success;
+                }
+                else
+                {
+                    return OperationStatus.NotFound;
+                }
+            }
+            catch(Exception ex)
+            {
+                return OperationStatus.Error;
+            }
+        }
+
+        public OperationStatus UpdateOrderItem(OrderItem item)
+        {
+            try
+            {
+                _context.Entry(item).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                return OperationStatus.Error;
+            }
+            return OperationStatus.Success;
+
+        }
+
+        public OperationStatus DeleteOrderItem(int id)
+        {           
+            try
+            {
+                var item = _context.OrderItem.FirstOrDefault(e=>e.Id == id);
+                if (item != null)
+                {
+                    _context.OrderItem.Remove(item);
+                    _context.SaveChanges();
+                    return OperationStatus.Success;
+                }
+                else
+                {
+                    return OperationStatus.NotFound;
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperationStatus.Error;
+            }
+            
+        }
     }
     public enum OperationStatus
     {
         Success = 0,
-        Error = 1
+        Error = 1,
+        NotFound = 2
     }
 
 }
