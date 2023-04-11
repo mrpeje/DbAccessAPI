@@ -102,7 +102,19 @@ namespace OrdersManager.DB_Access
 
         public OperationStatus UpdateOrder(Order order)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Update order
+                var dbOrder = _context.Entry(order);
+                //dbOrder.Entity.Provider = _context.Provider.FirstOrDefault(e => e.Id == order.ProviderId);
+                dbOrder.State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return OperationStatus.Error;
+            }
+            return OperationStatus.Success;
         }
 
         public OperationStatus CreateOrderItem(OrderItem item, int orderId)
