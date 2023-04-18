@@ -162,6 +162,24 @@ namespace DbAccessAPI.Controllers
                 return BadRequest();
             }
         }
+        [HttpPost("Order")]
+        public IActionResult CreateOrder(Order order)
+        {
+            try
+            {
+                var result = _dbProvider.CreateOrder(order);
+
+                if (result == OperationStatus.Success)
+                    return Ok();
+                else
+                    return BadRequest();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + " method UpdateOrder id:" + order.Id);
+                return BadRequest();
+            }
+        }
         [HttpPost("Order/Item/{orderId}")]
         public IActionResult CreateOrderItem(OrderItem item, int orderId)
         {

@@ -11,26 +11,10 @@ namespace OrdersManager.DB_Access
         {
             _context = context;
         }
-        public OperationStatus CreateOrder(OrderWithItems dataModel) 
+        public OperationStatus CreateOrder(Order order) 
         {
-            var newOrder = new Order
-            {
-                Number = dataModel.Order.Number,
-                Date = dataModel.Order.Date,
-                ProviderId = dataModel.Order.ProviderId
-            };
-            dataModel.Order.Provider = _context.Provider.FirstOrDefault(e=>e.Id == dataModel.Order.ProviderId);
-            _context.Order.Add(dataModel.Order);
-            
-
-            if (dataModel.OrderItems != null)
-            {
-                foreach (var item in dataModel.OrderItems)
-                {
-                    item.Order = dataModel.Order;
-                    _context.OrderItem.Add(item);
-                }
-            }
+            order.Provider = _context.Provider.FirstOrDefault(e=>e.Id == order.ProviderId);
+            _context.Order.Add(order);
             try
             {
                _context.SaveChanges();
